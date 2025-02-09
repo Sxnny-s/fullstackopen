@@ -1,74 +1,61 @@
-/* eslint-disable react/prop-types */
+import { use, useState } from 'react'
 
-
-const Header = (props) => {
-  console.log(props)
+const History = (props) => {
+  if (props.allClicks.length === 0) {
+    return (
+      <div>
+        the app is used by pressing the buttons
+      </div>
+    )
+  }
   return (
-    <>
-      <h1>{props.course}</h1>
-    </>
-  )
-
-}
-
-const Content = (props) => {
-  return (
-
-    <> 
-    <ol>
-      <li>{props.part} Exercises count {props.exercises}</li>
-      
-    </ol>
-    </>
+    <div>
+      button press history: {props.allClicks.join(' ')}
+    </div>
   )
 }
 
-const Total = (props) => {
+const Button = (props) => { 
+
+  console.log('props value is', props)
+  const { onClick, text } = props
   return (
-    <>
-      <span>Total Exercise Count {props.total}</span>
-    </>
+    <button onClick={onClick}>
+      {text}
+    </button>
   )
 }
-
 
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
+  const [left, setLeft] = useState(0)
+  const [right, setRight] = useState(0)
 
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-       name:'State of a component',
-       exercises: 14
-     }
-    ]
+  const [allClicks, setAll] = useState([])
+  const [total, increment] = useState(0)
+  
 
+
+  const handleLeftClick = () => {
+    setAll(allClicks.concat('L'))
+    increment(total + 1)
+
+    setLeft(left + 1)
   }
-  
-  const total = course.parts.reduce((a,c) => {
-    return a + c.exercises
-  },0)
 
-  
+  const handleRightClick = () => {
+    setAll(allClicks.concat('R'))
+    increment(total + 1)
+    setRight(right + 1)
+  }
 
   return (
     <div>
-      <Header course={course.name}/>
+      {left}
+      <Button onClick={handleLeftClick} text='left' />
+      <Button onClick={handleRightClick} text='right' />
+      {right}
 
-      {course.parts.map((e,i) =>{
-       return <Content key={i} part={e.name} exercises={e.exercises} />
-      })}
-
-  
-      <Total total={total} />
+      <History allClicks={allClicks} />
     </div>
   )
 }
