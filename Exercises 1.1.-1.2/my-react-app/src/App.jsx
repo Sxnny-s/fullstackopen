@@ -12,8 +12,8 @@ const Statistics = ({text,num}) => {
   </tr>)
 }
 
-const Display = ({anecdotes,index}) => {
- return <p>{anecdotes} </p>
+const Display = ({anecdotes,num}) => {
+ return <p> {anecdotes} <br></br> has  {num} votes </p> 
 }
 
 
@@ -65,7 +65,14 @@ const App = () => {
     setSelected(rng)
     
   }
+  
+  const [votes, setVote] = useState(Array(anecdotes.length).fill(0))
 
+  const handlevote = () => {
+    const newVotes = [...votes]
+    newVotes[selected]++
+    setVote(newVotes)
+  }
   const [selected, setSelected] = useState(0)
 
   return (
@@ -90,8 +97,9 @@ const App = () => {
 
       )}
         <Button onClick={rdmQuote} text={'Next anecdote'}/>
-      <Display anecdotes={anecdotes[selected]} />
+        <Button onClick={handlevote} text={'Vote'}/>
 
+        <Display anecdotes={anecdotes[selected]} num={votes[selected]} />
 
     </div>
   )
