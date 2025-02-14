@@ -1,86 +1,71 @@
-
-const Content = ({part}) => {
-  return (
-    <li>{part.name} {part.exercises}</li>
-  )
-}
-const Total = ({part}) => {
-  return (
-    <strong>Total of {part} exercises</strong>
-  )
-}
-
-const Course = ({course}) => {
-  return (
-    <>
-    <h1>{course.name}</h1>
-
-    <ul>
-      {course.parts.map(part => 
-        <Content  key={part.id} part={part} />
-      )}
-    </ul>
-
-    <Total part={course.parts.reduce((a,c) => a + c.exercises,0)} />
-  
-    </>
-
-    
-  )
-}
-
-
+import { useState } from 'react'
 
 const App = () => {
-  const courses = [
-    {
-      name: 'Half Stack application development',
-      id: 1,
-      parts: [
-        {
-          name: 'Fundamentals of React',
-          exercises: 10,
-          id: 1
-        },
-        {
-          name: 'Using props to pass data',
-          exercises: 7,
-          id: 2
-        },
-        {
-          name: 'State of a component',
-          exercises: 14,
-          id: 3
-        },
-        {
-          name: 'Redux',
-          exercises: 11,
-          id: 4
-        }
-      ]
-    }, 
-    {
-      name: 'Node.js',
-      id: 2,
-      parts: [
-        {
-          name: 'Routing',
-          exercises: 3,
-          id: 1
-        },
-        {
-          name: 'Middlewares',
-          exercises: 7,
-          id: 2
-        }
-      ]
-    }
-  ]
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ])
+
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [newFilter, setNewFilter] = useState('')
 
 
+  const handleNewName = (e) => {
+    setNewName(e.target.value)
+    
+  }
 
-  return courses.map(course =>  <Course key={course.id} course={course} />)
+  const handleNewNumber = (e) => {
+    setNewNumber(e.target.value)
+  }
+
+  const handleNewFilter = (e) => {
+    setNewFilter(e.target.value)
+    
+  }
+
+
+ 
+  const addName = (e) => {
+    e.preventDefault()
+    const newPerson = { name: newName, number: newNumber}
+    {if(persons.some(people => people.name === newName)){
+      alert(`${newName} is already added to phonebook`)
+    }else{
+      setPersons(persons.concat(newPerson))
+      setNewName('')
+      setNewNumber('')
+    }}
+  }
+
+
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <div>Filter Shown with<input value={newFilter} onChange={handleNewFilter}/></div>
+      <form onSubmit={addName}>
+        <div>
+          name: <input value={newName} onChange={handleNewName} />
+        </div>
+        <div>
+          Number: <input value={newNumber} onChange={handleNewNumber}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form >
+      <h2>Numbers</h2>
+      <ul>
+          {persons.filter(people => people.name.toLowerCase().includes(newFilter.toLowerCase())).map((people) => 
+            <li key={people.name}>{people.name} {people.number}</li>
+          )}
+      </ul>
   
+    </div>
+  )
 }
 
 export default App
