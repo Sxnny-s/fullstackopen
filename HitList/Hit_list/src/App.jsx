@@ -1,33 +1,143 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect} from 'react'
+import jobServices from './services/jobs';
+import { use } from 'react';
+import "./styles.css"
+
+
+const Header = () => {
+  return <h1>Welcome to your Hitlist</h1>
+}
+
+const Add = ({jobNameFunc,jobLocationFunc,jobSalaryFunc ,onSubmit,jobName,jobLocation,jobSalary}) => {
+  return <>
+  <form onSubmit={onSubmit}>
+    
+    <label htmlFor="company">Add a company: </label>
+    <input value={jobName}  onChange={jobNameFunc} type="text" name="company" id="company" placeholder='Enter company'/>
+    <br/>
+    <label htmlFor="location">location: </label>
+    <input value={jobLocation} onChange={jobLocationFunc} type="text" name="location" id="location" placeholder='Enter location'/>
+    <br/>
+    <label htmlFor="salary">Salary: </label>
+    <input value={jobSalary} onChange={jobSalaryFunc} type="number" name="salary" id="salary" placeholder='Enter salary'/>
+    <br/>
+    <button type='submit'>add</button>
+  </form>
+  </>
+}
+
+
+const Search = ({onChange}) => {
+  return <>
+    <h2>Search</h2>
+    <input onChange={onChange} type="text" placeholder='Enter company name'/>
+  </>
+}
+
+const ViewCompany = ({jobs, deleteFunc, filter}) => {
+  filter = filter.toLowerCase()
+
+  const filtedJobs = jobs.filter(job => job.companyName.toLowerCase().includes(filter))
+
+  return <>
+    <h2>Current HitList</h2>
+    <div>
+    {filtedJobs.map((job) => {
+      return <div className='job-card' key={job.id}> 
+        <button onClick={() => deleteFunc(job.id)} >Delete</button>
+        <li >Company: {job.companyName}</li>  
+        <li >Location: {job.location}</li>  
+        <li >Salary: {job.salary}</li> 
+      </div>
+    })}
+
+    </div>
+  </>
+}
+
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [jobName, setJobName] = useState('')
+  const [jobLocation, setJobLocation] = useState('')
+  const [jobSalary, setJobSalary] = useState('')
+  const [jobs, setJobs] = useState([])
+  const [filter, setFilter]  = useState('')
+
+
+  // HOOKS
+  const hook = () => {
+    jobServices.getAll()
+      .then(res => {
+        setJobs(res.data)
+      })
+  }
+  useEffect(hook,[])
+  //Input functions 
+  const handleNewJobName = (e) => {
+    setJobName(e.target.value)
+    console.log(jobName)
+  }
+  const handleNewJobLocation = (e) => {
+    console.log(e.target.value)
+    setJobLocation(e.target.value)
+  }
+  const handleNewJobSalary = (e) => {
+    console.log(e.target.value)
+    setJobSalary(e.target.value)
+  }
+
+  const handleNewFilter = (e) => {
+    console.log(e.target.value)
+    setFilter(e.target.value)
+  }
+
+  
+  // Push to database
+  const pushToDataBase = (e) => {
+    e.preventDefault()
+
+    const newJob =  {
+      companyName: jobName ,
+      location: jobLocation,
+      salary: jobSalary,
+      important: false
+    }
+
+    jobServices.create(newJob)
+      .then(res => {
+          setJobs(jobs.concat(res.data))
+          console.log(res.data)
+          
+          // Reset input fields
+            setJobName('');
+            setJobLocation('');
+            setJobSalary('');
+        })
+      .catch(err => console.error(err))
+
+
+  }
+  // Delete from database
+  const removeFromDatabase = (id) => {
+    jobServices.remove(id)
+      .then(res => {
+        console.log(res)
+        setJobs(jobs.filter(job => job.id !== id))
+      })
+  }
+
+
+
+  
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <Header/>
+    <Add jobName={jobName} jobLocation={jobLocation} jobSalary={jobSalary} jobNameFunc={handleNewJobName} jobLocationFunc={handleNewJobLocation} jobSalaryFunc={handleNewJobSalary} onSubmit={pushToDataBase} />
+    <Search onChange={handleNewFilter}/>
+    <ViewCompany filter={filter} jobs={jobs} deleteFunc={removeFromDatabase}/>
+  
     </>
   )
 }
