@@ -8,7 +8,7 @@ const Header = () => {
   return <h1>Welcome to your Hitlist</h1>
 }
 
-const Add = ({jobNameFunc,jobLocationFunc,jobSalaryFunc ,onSubmit,jobName,jobLocation,jobSalary}) => {
+const Add = ({jobNameFunc,jobLocationFunc,jobSalaryFunc ,onSubmit,jobName,jobLocation,jobSalary,jobLink,jobLinkFunc}) => {
   return <>
   <form onSubmit={onSubmit}>
     
@@ -21,6 +21,8 @@ const Add = ({jobNameFunc,jobLocationFunc,jobSalaryFunc ,onSubmit,jobName,jobLoc
     <label htmlFor="salary">Salary: </label>
     <input value={jobSalary} onChange={jobSalaryFunc} type="number" name="salary" id="salary" placeholder='Enter salary'/>
     <br/>
+    <label htmlFor="link">Job Link: </label>
+    <input value={jobLink} onChange={jobLinkFunc} type="text" name="link" id="link" placeholder='Enter application link'/>
     <button type='submit'>add</button>
   </form>
   </>
@@ -34,7 +36,7 @@ const Search = ({onChange}) => {
   </>
 }
 
-const ViewCompany = ({jobs, deleteFunc, filter}) => {
+const ViewCompany = ({jobs, deleteFunc, filter, toggleFunc}) => {
   filter = filter.toLowerCase()
 
   const filtedJobs = jobs.filter(job => job.companyName.toLowerCase().includes(filter))
@@ -42,14 +44,32 @@ const ViewCompany = ({jobs, deleteFunc, filter}) => {
   return <>
     <h2>Current HitList</h2>
     <div>
+    <div className="job-container">
     {filtedJobs.map((job) => {
       return <div className='job-card' key={job.id}> 
         <button onClick={() => deleteFunc(job.id)} >Delete</button>
+        <button id='applied' onClick={() => toggleFunc(job.id)} >Applied</button>
+
         <li >Company: {job.companyName}</li>  
         <li >Location: {job.location}</li>  
-        <li >Salary: {job.salary}</li> 
+        <li >Salary: ${Number(job.salary).toLocaleString()}</li>
+        <li >Application Link: <a target='_blank' href={job.link}>Click here</a> </li>
+        <li >Applied: 
+        <span 
+
+        style={{
+          width: '15px',
+          height: '15px',
+          borderRadius: '50%',
+          backgroundColor: job.applied ? 'green' : 'red',
+          display: 'inline-block',
+          marginLeft: '5px'
+        }}>
+        </span>
+           </li> 
       </div>
     })}
+    </div>
 
     </div>
   </>
@@ -63,6 +83,7 @@ function App() {
   const [jobSalary, setJobSalary] = useState('')
   const [jobs, setJobs] = useState([])
   const [filter, setFilter]  = useState('')
+  const [jobLink, setJobLink] = useState('')
 
 
   // HOOKS
@@ -91,52 +112,66 @@ function App() {
     console.log(e.target.value)
     setFilter(e.target.value)
   }
+  const handleNewJobLink = (e) => {
+    console.log(e.target.value)
+    setJobLink(e.target.value)
+  }
 
+  
   
   // Push to database
   const pushToDataBase = (e) => {
     e.preventDefault()
-
+    
     const newJob =  {
       companyName: jobName ,
       location: jobLocation,
       salary: jobSalary,
-      important: false
+      link: jobLink,
+      applied: false
     }
-
+    
     jobServices.create(newJob)
-      .then(res => {
-          setJobs(jobs.concat(res.data))
-          console.log(res.data)
-          
-          // Reset input fields
-            setJobName('');
-            setJobLocation('');
-            setJobSalary('');
-        })
-      .catch(err => console.error(err))
-
-
+    .then(res => {
+      setJobs(jobs.concat(res.data))
+      console.log(res.data)
+      
+      // Reset input fields
+      setJobName('');
+      setJobLocation('');
+      setJobSalary('');
+      setJobLink('')
+    })
+    .catch(err => console.error(err))
+    
+    
   }
   // Delete from database
   const removeFromDatabase = (id) => {
     jobServices.remove(id)
+    .then(res => {
+      console.log(res)
+      setJobs(jobs.filter(job => job.id !== id))
+    })
+  }
+  // Toggle applied stastus
+  
+  const handleToggleApplied = id => {
+    jobServices.toggleApplied(id)
       .then(res => {
-        console.log(res)
-        setJobs(jobs.filter(job => job.id !== id))
+        console.log(res.data)
+        setJobs(jobs.map(job => job.id === id ? {...job, applied: res.data.applied} : job))
       })
   }
-
-
 
   
 
   return (
     <>
     <Header/>
-    <Add jobName={jobName} jobLocation={jobLocation} jobSalary={jobSalary} jobNameFunc={handleNewJobName} jobLocationFunc={handleNewJobLocation} jobSalaryFunc={handleNewJobSalary} onSubmit={pushToDataBase} />
+    <Add  jobLink={jobLink} jobName={jobName} jobLocation={jobLocation} jobSalary={jobSalary} jobLinkFunc={handleNewJobLink} jobNameFunc={handleNewJobName} jobLocationFunc={handleNewJobLocation} jobSalaryFunc={handleNewJobSalary} onSubmit={pushToDataBase} />
     <Search onChange={handleNewFilter}/>
-    <ViewCompany filter={filter} jobs={jobs} deleteFunc={removeFromDatabase}/>
+    <ViewCompany toggleFunc={handleToggleApplied} filter={filter} jobs={jobs} deleteFunc={removeFromDatabase}/>
   
     </>
   )

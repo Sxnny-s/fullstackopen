@@ -12,7 +12,12 @@ const create = (newObject) => {
 
 const remove = id => {
     return axios.delete(`${baseUrl}/${id}`)
-} 
+}
+
+const toggleApplied = async (id) => {
+    const job = await axios.get(`${baseUrl}/${id}`)
+    return axios.put(`${baseUrl}/${id}`, {...job.data, applied : !job.data.applied})
+}
 
 
-export default {getAll,create,remove}
+export default {getAll,create,remove,toggleApplied}
