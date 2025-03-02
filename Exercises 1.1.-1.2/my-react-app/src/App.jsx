@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react'
 import axios from 'axios'
 import peopleServices from './services/people'
+import { set } from 'mongoose'
 
 
 
@@ -106,18 +107,25 @@ const App = () => {
       peopleServices.create(newPerson)
       .then(res => {
         console.log(res)
+        
+        setPersons(persons.concat(newPerson))
+        
+        setErrorMessage(`${newName} has been added`)
+        
+        setTimeout(() => {
+          setErrorMessage(null)
+        },5000)
+        setNewName('')
+        setNewNumber('')
       })
-      setPersons(persons.concat(newPerson))
+      .catch(err => {
+          console.log(err)
+           setErrorMessage(`${err.response.data.error}`) 
       
-      setErrorMessage(`${newName} has been added`)
-      
-      setTimeout(() => {
-        setErrorMessage(null)
-      },5000)
-      setNewName('')
-      setNewNumber('')
-    }}
+      })
+    }
   }
+}
 
   const removePerson = (id,name) => {
     if(confirm(`Delete ${name} ?`)){
