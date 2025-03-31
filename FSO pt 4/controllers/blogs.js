@@ -108,7 +108,7 @@ blogRouter.get('/', async (request, response) => {
       return response.status(404).json({error: 'Blog not found'})
     }
 
-   return response.status(200).json(updatedLikes)
+    return response.status(200).json(updatedLikes)
 
   })
 
