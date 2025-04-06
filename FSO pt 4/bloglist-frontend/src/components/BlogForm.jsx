@@ -27,7 +27,8 @@ const BlogForm = ({
       <form onSubmit={onSubmit}>
         <label htmlFor="title">Title</label>
         <input
-        className="title"
+          data-testid='title'
+          className="title"
           value={title}
           placeholder="title"
           type="text"
@@ -36,6 +37,7 @@ const BlogForm = ({
 
         <label htmlFor="author">Author</label>
         <input
+          data-testid='author'
           className="author"
           value={author}
           onChange={({ target }) => setAuthor(target.value)}
@@ -46,7 +48,8 @@ const BlogForm = ({
 
         <label htmlFor="url">Url</label>
         <input
-        className="url"
+          data-testid='url'
+          className="url"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
           id="url"
@@ -54,7 +57,7 @@ const BlogForm = ({
           placeholder="URL"
         />
 
-        <button className="button" type="submit">Create</button>
+        <button data-testid='submit' className="button" type="submit">Create</button>
       </form>
     </div>
   );

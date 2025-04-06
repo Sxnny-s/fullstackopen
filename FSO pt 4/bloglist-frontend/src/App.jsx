@@ -126,10 +126,12 @@ const App = () => {
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin} >
           <label htmlFor="Username">Username</label>
-          <input id='Username' placeholder='username' onChange={({ target }) => setUsername(target.value) }/>
+          <input data-testid='username' id='Username' placeholder='username' onChange={({ target }) => setUsername(target.value) }/>
 
           <label htmlFor="Password">password</label>
-          <input id='Password' placeholder='Password' onChange={({ target }) => setPassword(target.value)}/>
+
+          <input data-testid='password' id='Password' placeholder='Password' onChange={({ target }) => setPassword(target.value)}/>
+
           <button type='submit'>login</button>
         </form>
         <div style={{ color: 'red' }}>{errorMessage}</div>
