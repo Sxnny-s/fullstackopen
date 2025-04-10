@@ -6,13 +6,8 @@ const AnecdotesList = () => {
     const filter = useSelector(state => state.filter)
 
     const filteredAnecdotes = anecdotes.filter(anecdote => {
-      
-      if(anecdotes.length > 0){
-        console.log(anecdote  )
+        console.log(anecdote)
         return anecdote.content.toLowerCase().includes(filter.toLowerCase())
-      }else{
-        return anecdote.content
-      }
       })
     
 

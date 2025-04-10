@@ -14,7 +14,6 @@ const App = () => {
     anecdotes.getAll().then(anecdotes => 
       dispatch({type: 'anecdotes/setAnecdote', payload: {anecdotes}})
     )
-  
   },[])
 
   return (
