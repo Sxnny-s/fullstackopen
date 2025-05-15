@@ -1,5 +1,7 @@
 
+
 const calculateBmi = (height: number, weight: number) : string => {
+
     const BMI = weight / ((height / 100) * (height / 100))
     console.log(BMI)
 
@@ -22,4 +24,16 @@ const calculateBmi = (height: number, weight: number) : string => {
     }
 } 
 
-console.log(calculateBmi(180, 74))
+if (require.main === module) {
+    const h = Number(process.argv[2]);
+    const w = Number(process.argv[3]);
+
+    if (isNaN(h) || isNaN(w)) {
+        console.error("Malformatted parameters");
+        process.exit(1);
+    }
+
+    console.log(calculateBmi(h, w));
+}
+
+export {calculateBmi}

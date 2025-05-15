@@ -8,6 +8,9 @@ interface Result {
     average: number,
 }
 
+const target: number = Number(process.argv[2])
+const arr: Array<number> = (process.argv.slice(3).map(Number))
+
 const exerciseCalculator = (list: Array<number>, target: number): Result  => {
     
    const periodLength = list.length
@@ -35,4 +38,6 @@ const exerciseCalculator = (list: Array<number>, target: number): Result  => {
 
 }
 
-console.log(exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2))
+console.log(exerciseCalculator(arr, target))
+
+export {exerciseCalculator}

@@ -4,8 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bmi": "ts-node bmiCalculator.ts",
+    "exercise": "ts-node exerciseCalculator.ts",
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev index.ts",
+    "lint": "eslint ."
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
+    "@types/eslint__js": "^9.14.0",
+    "@types/express": "^5.0.1",
+    "eslint": "^9.26.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
